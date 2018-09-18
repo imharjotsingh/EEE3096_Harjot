@@ -52,6 +52,7 @@ def ConvertLight(data, places):
     light=vOut/3.3*100
     light=round(light,places)
     return light
+    
 
 #generation  of a  string to display time and timer in the correct format using string slicing
 def TimeFormat(t):
