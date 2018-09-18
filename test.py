@@ -103,4 +103,4 @@ while True:
 #     pot_value = ReadChannel(pot_channel)
 #     print "---------------------------------------"
 #     print("Pot Value: %d" % pot_value)
-#    time.sleep(delay)
+#     time.sleep(delay)
