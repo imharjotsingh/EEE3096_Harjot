@@ -1,4 +1,59 @@
+#!/usr/bin/python
+ 
+import spidev
+import time
+import os
+import RPi.GPIO as GPIO
 
+GPIO.setmode(GPIO.BCM)
+reset =17
+freq =27
+stop =22
+display=23
+
+#VariablesDefination
+delay = 0.5
+ldr_channel = 2
+temp_channel = 0
+pot_channel = 1
+
+
+#interrupt switches set up
+GPIO.setup(reset, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(freq, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(display, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+#Create SPI Object
+spi = spidev.SpiDev()
+spi.open(0, 0)
+spi.max_speed_hz=1000000
+
+
+#read SPI data from MCP3008 chip
+def getChannel(channel):
+  adc = spi.xfer2([1,(8+channel)<<4,0])
+  data = ((adc[1]&3) << 8) + adc[2]
+  return data
+    
+def ConvertVolts(data,places):
+  volts = (data * 3.3) / float(1023)
+  volts = round(volts,places)
+  return volts
+
+def ConvertTemp(data,places):
+  temp = (((data * 3.30)/float(1023))-0.50)/0.01
+  temp = round(temp,places)
+  return temp
+
+#convert light incident to LDR to a percent
+def ConvertLight(data, places):
+    vOut=(data*3.3)/float(1023)
+    light=vOut/3.3*100
+    light=round(light,places)
+    return light
+ 
 
 #generation  of a  string to display time and timer in the correct format using string slicing
 def TimeFormat(t):
